@@ -1,6 +1,38 @@
 {
   "calculations": [
     {
+      "id": "calc-1794678314745",
+      "calculation_number": "СМЕТА-2026-6824",
+      "contractor_name": "ООО «СеверМерч»",
+      "product_type": "Футболка",
+      "quantity": 100,
+      "difficulty": "Средняя",
+      "parts_count": 4,
+      "fabric_name": "Кулирная гладь (хлопок)",
+      "fabric_price": 300,
+      "roll_width": 150,
+      "seam": 1.5,
+      "length": 70,
+      "chest": 55,
+      "sleeve": 25,
+      "waste": 15,
+      "branding_type": "none",
+      "extras_json": "{\"pocket\":false,\"hood\":true,\"lining\":true}",
+      "fabric_cost": 34000,
+      "cutting_cost": 5000,
+      "sewing_cost": 28800,
+      "hardware_cost": 3000,
+      "branding_cost": 1000,
+      "total_cost": 71800,
+      "unit_cost": 718,
+      "total_meters": 113,
+      "cutting_hours": 12.5,
+      "sewing_hours": 64,
+      "total_production_hours": 76.5,
+      "production_days": 5,
+      "created_at": "2026-11-14T17:43:06.760Z"
+    },
+    {
       "id": "calc-1794673892918",
       "calculation_number": "СМЕТА-2026-8421",
       "contractor_name": "ООО «СеверМерч»",
@@ -162,5 +194,5 @@
     }
   ],
   "proposals": [],
-  "savedAt": "2026-11-14T16:31:32.930Z"
+  "savedAt": "2026-11-14T17:45:14.816Z"
 }
