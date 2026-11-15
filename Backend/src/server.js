@@ -1,3 +1,10 @@
+/**
+ * @file server.js
+ * @description Главная точка входа REST API производственного цеха
+ * Проект: «II Калькулятор себестоимости и раскроя изделия»
+ * Заказчик: Производственный цех (г. Сургут, ул. Комплектовочная, 5)
+ */
+
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
@@ -13,17 +20,23 @@ const proposalsRouter = require("./routes/proposals");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Инициализация базы данных PostgreSQL
+// ============================================================================
+// 1. ИНИЦИАЛИЗАЦИЯ БАЗЫ ДАННЫХ POSTGRESQL
+// ============================================================================
 initDb().catch((err) => console.error("Database initialization failed:", err));
 
-// CORS и парсинг JSON
+// ============================================================================
+// 2. БАЗОВЫЕ MIDDLEWARE (CORS И ПАРСИНГ JSON)
+// ============================================================================
 app.use(cors({
   origin: true,
   credentials: true,
 }));
 app.use(express.json());
 
-// Базовый мониторинг работоспособности сервиса
+// ============================================================================
+// 3. СИСТЕМНЫЙ HEALTHCHECK МОНИТОРИНГ
+// ============================================================================
 app.get("/api/health", (req, res) => {
   res.json({
     status: "ok",
@@ -33,24 +46,30 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Регистрация маршрутов API (7 модулей ТЗ)
-app.use("/api/auth", authRouter);
-app.use("/api/tech-settings", techSettingsRouter);
-app.use("/api/fabrics", fabricsRouter);
-app.use("/api/contractors", contractorsRouter);
-app.use("/api/calculations", calculationsRouter);
-app.use("/api/proposals", proposalsRouter);
+// ============================================================================
+// 4. МАРШРУТЫ API ПО МОДУЛЯМ ТЗ
+// ============================================================================
+app.use("/api/auth", authRouter);                   // Модуль 1: Авторизация и пользователи
+app.use("/api/tech-settings", techSettingsRouter); // Модуль 6: Нормативы технолога
+app.use("/api/fabrics", fabricsRouter);             // Модуль 6: Справочник тканей
+app.use("/api/contractors", contractorsRouter);     // Модуль 1: Справочник подрядчиков
+app.use("/api/calculations", calculationsRouter);   // Модули 4 & 7: Расчёты и история
+app.use("/api/proposals", proposalsRouter);         // Модуль 5: Коммерческие предложения
 
-// Централизованная обработка ошибок
+// ============================================================================
+// 5. ЦЕНТРАЛИЗОВАННАЯ ОБРАБОТКА ОШИБОК
+// ============================================================================
 app.use((err, req, res, next) => {
-  console.error("API Error:", err);
-  res.status(500).json({
+  console.error("[Server Error]:", err);
+  res.status(err.status || 500).json({
     error: "Внутренняя ошибка сервера",
     details: err.message,
   });
 });
 
-// Запуск HTTP-сервера
+// ============================================================================
+// 6. ЗАПУСК HTTP СЕРВЕРА
+// ============================================================================
 app.listen(PORT, () => {
   console.log(`=======================================================`);
   console.log(`🚀 Сервер калькулятора запущен на порту ${PORT}`);
@@ -60,3 +79,4 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+

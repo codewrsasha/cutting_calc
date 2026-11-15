@@ -1,14 +1,26 @@
+/**
+ * @file proposals.js
+ * @description Маршрутизация коммерческих предложений (Модуль 5 ТЗ)
+ *
+ * Возможности:
+ * - Генерация нового коммерческого предложения с уникальным токеном
+ * - Публичный просмотр КП по ссылке для подрядчиков (`GET /public/:token`)
+ * - Фиксация отправки КП на Email подрядчика
+ */
+
 const express = require("express");
 const router = express.Router();
 const crypto = require("node:crypto");
 const { query, persistState } = require("../db");
 
-// Форматирование денег
+/**
+ * Форматирует числовое значение в рубли с неразрывным пробелом
+ */
 function formatMoney(num) {
-  return `${new Intl.NumberFormat("ru-RU").format(Math.round(num))} ₽`;
+  return `${new Intl.NumberFormat("ru-RU").format(Math.round(num))}\u00A0₽`;
 }
 
-// 1. Создание коммерческого предложения (Модуль 5 ТЗ)
+// 1. Создание коммерческого предложения
 router.post("/", async (req, res, next) => {
   try {
     const { calculationId, recipientEmail = "" } = req.body;
@@ -61,7 +73,7 @@ router.get("/public/:token", async (req, res, next) => {
       return res.status(404).send("<h2>Коммерческое предложение не найдено или ссылка устарела</h2>");
     }
 
-    // Фиксируем факт просмотра
+    // Фиксация факта просмотра
     await query("UPDATE commercial_proposals SET is_viewed = 1 WHERE public_token = $1", [token]);
     await persistState();
 
@@ -167,7 +179,7 @@ router.get("/public/:token", async (req, res, next) => {
   }
 });
 
-// 3. Отправка коммерческого предложения на Email (Модуль 5 ТЗ)
+// 3. Отправка коммерческого предложения на Email
 router.post("/:id/send-email", async (req, res, next) => {
   try {
     const { id } = req.params;

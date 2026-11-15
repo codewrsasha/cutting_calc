@@ -1,38 +1,40 @@
+/**
+ * @file contractors.js
+ * @description Маршрутизация справочника подрядчиков цеха (Модуль 1 ТЗ)
+ */
+
 const express = require("express");
 const router = express.Router();
 const crypto = require("node:crypto");
-const { query } = require("../db");
+const { query, persistState } = require("../db");
 
-// Список подрядчиков (Модуль 1 ТЗ)
+// 1. Получение списка контрагентов
 router.get("/", async (req, res, next) => {
   try {
     const { q } = req.query;
     let result;
     if (q && q.trim()) {
       const search = `%${q.trim()}%`;
-      result = await query(
-        "SELECT * FROM contractors WHERE name ILIKE $1 OR contact_person ILIKE $1 OR inn ILIKE $1 ORDER BY name ASC",
-        [search]
-      );
+      result = await query(`
+        SELECT id, name, contact_person as contact, email, phone, inn, address
+        FROM contractors
+        WHERE name ILIKE $1 OR contact_person ILIKE $1
+        ORDER BY name ASC;
+      `, [search]);
     } else {
-      result = await query("SELECT * FROM contractors ORDER BY name ASC");
+      result = await query(`
+        SELECT id, name, contact_person as contact, email, phone, inn, address
+        FROM contractors
+        ORDER BY name ASC;
+      `);
     }
-
-    res.json(result.rows.map(c => ({
-      id: c.id,
-      name: c.name,
-      contact: c.contact_person,
-      email: c.email,
-      phone: c.phone,
-      inn: c.inn,
-      address: c.address,
-    })));
+    res.json(result.rows);
   } catch (err) {
     next(err);
   }
 });
 
-// Создание нового подрядчика
+// 2. Добавление нового подрядчика
 router.post("/", async (req, res, next) => {
   try {
     const { name, contact = "", email = "", phone = "", inn = "", address = "" } = req.body;
@@ -46,7 +48,17 @@ router.post("/", async (req, res, next) => {
       VALUES ($1, $2, $3, $4, $5, $6, $7);
     `, [id, name.trim(), contact.trim(), email.trim(), phone.trim(), inn.trim(), address.trim()]);
 
-    res.status(201).json({ id, name, contact, email, phone, inn, address });
+    await persistState();
+
+    res.status(201).json({
+      id,
+      name: name.trim(),
+      contact: contact.trim(),
+      email: email.trim(),
+      phone: phone.trim(),
+      inn: inn.trim(),
+      address: address.trim(),
+    });
   } catch (err) {
     next(err);
   }

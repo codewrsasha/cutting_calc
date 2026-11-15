@@ -7,6 +7,7 @@
 -- 1. Пользователи и роли (Модуль 1 ТЗ)
 CREATE TABLE IF NOT EXISTS users (
   id VARCHAR(64) PRIMARY KEY,
+  username VARCHAR(64) UNIQUE,
   email VARCHAR(128) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   full_name VARCHAR(128) NOT NULL,
@@ -79,6 +80,8 @@ CREATE TABLE IF NOT EXISTS calculations (
   sewing_hours NUMERIC NOT NULL,
   total_production_hours NUMERIC NOT NULL,
   production_days INTEGER NOT NULL,
+  created_by_name VARCHAR(128),
+  created_by_role VARCHAR(32),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -102,11 +105,12 @@ INSERT INTO tech_settings (id, sewing_hour_rate, cutting_hour_rate, cutting_part
 VALUES (1, 450, 400, 32, 10, 10, 16)
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO users (id, email, password_hash, full_name, role)
+INSERT INTO users (id, username, email, password_hash, full_name, role)
 VALUES
-  ('u-1', 'technologist@surgut-sew.ru', 'tech2026', 'Петрова Анна Сергеевна (Технолог цеха)', 'technologist'),
-  ('u-2', 'manager@surgut-sew.ru', 'mgr2026', 'Сидоров Максим Игоревич (Менеджер заказов)', 'manager')
-ON CONFLICT (email) DO NOTHING;
+  ('u-admin', 'admin', 'admin@surgut-sew.ru', '$2b$10$TzL0fEG53.X73t.vfX/Kz.Y97auLsNwpNU8aJrwnBdVHusLArIORO', 'Главный Администратор цеха', 'admin'),
+  ('u-1', 'technologist', 'technologist@surgut-sew.ru', '$2b$10$aZNPcEee5JVB2RU8HT1dBOkqaf8Lngt2.OKCplfCL3hgF27dgp4ca', 'Петрова Анна Сергеевна (Технолог цеха)', 'technologist'),
+  ('u-2', 'manager', 'manager@surgut-sew.ru', '$2b$10$A5UczVAoC8m3Sa9mDXHvf.i5V/roX3dlcWcsn.VGbXX3Mp.QWegJm', 'Сидоров Максим Игоревич (Менеджер заказов)', 'manager')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO fabrics (id, name, roll_width, price_per_meter)
 VALUES

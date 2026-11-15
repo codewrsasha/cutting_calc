@@ -1,9 +1,14 @@
+/**
+ * @file fabrics.js
+ * @description Маршрутизация справочника тканей цеха (Модуль 6 ТЗ)
+ */
+
 const express = require("express");
 const router = express.Router();
 const crypto = require("node:crypto");
 const { query } = require("../db");
 
-// Список активных тканей (Модуль 6 ТЗ)
+// 1. Список активных тканей цеха
 router.get("/", async (req, res, next) => {
   try {
     const { rows } = await query(
@@ -20,7 +25,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// Добавление новой ткани в справочник
+// 2. Добавление новой ткани в справочник
 router.post("/", async (req, res, next) => {
   try {
     const { name, rollWidth = 150, pricePerMeter = 300 } = req.body;
@@ -40,12 +45,12 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-// Удаление ткани из справочника
+// 3. Удаление ткани из справочника (мягкое удаление)
 router.delete("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     await query("UPDATE fabrics SET is_active = 0 WHERE id = $1", [id]);
-    res.json({ message: "Ткань удалена из справочника" });
+    res.json({ message: "Ткань успешно удалена из справочника" });
   } catch (err) {
     next(err);
   }

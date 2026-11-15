@@ -1,8 +1,13 @@
+/**
+ * @file techSettings.js
+ * @description Маршрутизация нормативов и базовых тарифов технолога цеха (Модуль 6 ТЗ)
+ */
+
 const express = require("express");
 const router = express.Router();
 const { query } = require("../db");
 
-// Получение действующих нормативов технолога (Модуль 6 ТЗ)
+// 1. Получение действующих нормативов технолога
 router.get("/", async (req, res, next) => {
   try {
     const { rows } = await query("SELECT * FROM tech_settings WHERE id = 1");
@@ -25,7 +30,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// Обновление ставок технологом (Модуль 6 ТЗ)
+// 2. Обновление ставок технологом
 router.put("/", async (req, res, next) => {
   try {
     const {
@@ -72,7 +77,7 @@ router.put("/", async (req, res, next) => {
   }
 });
 
-// Сброс ставок к заводским
+// 3. Сброс ставок к заводским
 router.post("/reset", async (req, res, next) => {
   try {
     await query(`

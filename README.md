@@ -6,7 +6,7 @@
 ## 🏗 Архитектура проекта
 
 ```text
-C:\Calc_Project
+C:\Users\hackaton\Documents\gtybc
 ├── Backend/                  # Серверная часть (Node.js, Express, PostgreSQL)
 │   ├── data/                 # Хранилище постоянного состояния (PostgreSQL snapshots)
 │   ├── src/
